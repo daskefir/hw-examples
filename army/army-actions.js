@@ -10,7 +10,6 @@ var newForce = [
 ];
 
 var squad = new Squad(newForce);
-console.log(squad.getResources(2));
 
 render(document.getElementById("wrapper"), squad.getResources());
 
