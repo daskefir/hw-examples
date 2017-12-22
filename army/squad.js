@@ -47,9 +47,7 @@ Squad.prototype.getReadyToFightResources = function (damage) {
 
 Squad.prototype.cloneResources = function (index) {
     return this.isResourceExists(index) ? this._squad[index].clone() :
-        this._squad.map(function (resource) {
-            return resource.clone();
-        });
+        new Squad(this._squad);
 }
 
 Squad.prototype.isResourceExists = function (index) {
