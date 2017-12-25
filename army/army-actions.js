@@ -10,10 +10,12 @@ var newForce = [
 ];
 
 var squad = new Squad(newForce);
+var secondSquad = squad.clone();
 
-render(document.getElementById("wrapper"), squad.getResources());
-
-setTimeout(function () {
-    squad.getResources(3).attackedBy(squad.getResources(2));
-    render(document.getElementById("wrapper"), squad.getResources());
-}, 1000);
+var battleField = new Battlefield([squad, secondSquad])
+function draw() {
+    render(document.getElementsByClassName("first-squad")[0], squad.getResources());
+    render(document.getElementsByClassName("second-squad")[0], secondSquad.getResources());
+}
+draw();
+// battleField.fight(draw);

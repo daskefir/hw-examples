@@ -5,12 +5,18 @@ function Squad(defaultResources) {
 }
 
 Squad.prototype.getResources = function (index) {
-    return this.isResourceExists(index) || this._squad;
+    return this.isResourceExists(index) ? this._squad[index] : this._squad;
 }
 
 Squad.prototype.combineResources = function (defaultResources) {
     if (Array.isArray(defaultResources))
         this._squad = this._squad.concat(defaultResources);
+}
+
+Squad.prototype.getRandomUnit = function () {
+    if (this._squad.length)
+        return this._squad[Math.ceil(Math.random() * (this._squad.length - 1))];
+    else throw new Error("No units exist!");
 }
 
 Squad.prototype.isResourcesReadyToMove = function (distance, index) {
@@ -45,6 +51,11 @@ Squad.prototype.getReadyToFightResources = function (damage) {
     })
 }
 
+Squad.prototype.removeResource = function (index) {
+    if (this.isResourceExists(index))
+        this._squad.splice(index, 1);
+}
+
 Squad.prototype.cloneResources = function (index) {
     return this.isResourceExists(index) ? this._squad[index].clone() :
         new Squad(this._squad);
@@ -52,4 +63,8 @@ Squad.prototype.cloneResources = function (index) {
 
 Squad.prototype.isResourceExists = function (index) {
     return index && this._squad[index];
+}
+
+Squad.prototype.clone = function () {
+    return new Squad(this._squad);
 }

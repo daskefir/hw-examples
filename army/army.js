@@ -24,4 +24,6 @@ Resource.prototype.clone = function () {
 
 Resource.prototype.attackedBy = function (target) {
     this.health -= target.damage;
+    if (!this.health || this.health < 0)
+        throw new Error("Resource " + this.type + " is dead");
 }
