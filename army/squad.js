@@ -1,5 +1,7 @@
-function Squad(defaultResources) {
+function Squad(title, defaultResources) {
+    this.title = title;
     this._squad = [];
+    this._deadUnits = [];
     if (defaultResources)
         this.combineResources(defaultResources);
 }
@@ -65,6 +67,47 @@ Squad.prototype.isResourceExists = function (index) {
     return index && this._squad[index];
 }
 
+Squad.prototype.attack = function (from, to) {
+    Resource.checkForResource(from);
+    var self = this;
+    if (to && this._squad[to])
+        this._squad[to].attack(from);
+    else
+        this.shuffle().forEach(function (resource) {
+            try {
+                resource.attack(from);
+            } catch (err) {
+                if (err instanceof DeadError)
+                    self.removeDeadUnit(resource);
+            }
+        })
+
+    if (!this._squad.length)
+        throw new SquadIsDeadError(this);
+}
+
+Squad.prototype.removeDeadUnit = function (resource) {
+    var indexOfUnit = this._squad.indexOf(resource);
+    indexOfUnit > -1 && this._deadUnits.push(this._squad.splice(indexOfUnit, 1)[0]);
+}
+
+Squad.prototype.shuffle = function () {
+    var array = [];
+    var currentIndex = this._squad.length, temporaryValue, randomIndex;
+
+    while (0 !== currentIndex) {
+
+        randomIndex = Math.floor(Math.random() * currentIndex);
+        currentIndex -= 1;
+
+        temporaryValue = this._squad[currentIndex];
+        array[currentIndex] = this._squad[randomIndex];
+        array[randomIndex] = temporaryValue;
+    }
+
+    return array;
+}
+
 Squad.prototype.clone = function () {
-    return new Squad(this._squad);
+    return new Squad(this.title, this._squad);
 }

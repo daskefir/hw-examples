@@ -9,13 +9,12 @@ var newForce = [
     soldier.clone()
 ];
 
-var squad = new Squad(newForce);
+var squad = new Squad("My first squad", newForce);
 var secondSquad = squad.clone();
+secondSquad.title = "My second squad";
+var thirdSquad = squad.clone();
+thirdSquad.title = "My third squad";
 
-var battleField = new Battlefield([squad, secondSquad])
-function draw() {
-    render(document.getElementsByClassName("first-squad")[0], squad.getResources());
-    render(document.getElementsByClassName("second-squad")[0], secondSquad.getResources());
-}
-draw();
-// battleField.fight(draw);
+wrapper.innerHTML = battlefieldTemplate([squad, secondSquad, thirdSquad]);
+var battleField = new Battlefield([squad, secondSquad, thirdSquad])
+battleField.fight();

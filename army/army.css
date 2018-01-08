@@ -4,22 +4,60 @@
     text-align: center;
 }
 
-.resource .health,
-.resource .stamina {
+.battlefield {
+    position: relative;
+    padding: 15px 0;
+}
+
+#wrapper .battlefield-block {
+    border: 1px solid #ccc;
+    padding: 15px;
+    overflow: hidden;
+}
+
+.resource .health-bar,
+.resource .stamina-bar {
     position: relative;
 }
 
-.resource .health .bar-color {
+.resource .bar {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+}
+
+.resource .health-info {
+    position: relative;
+    z-index: 1;
+}
+
+.resource .health-bar .bar {
     background-color: red;
 }
 
-.resource .health .bar-info, .resource .stamina .bar-info{
+.resource .stamina-bar .bar {
+    background-color: brown;
+}
+
+.resource .health .bar-info,
+.resource .stamina .bar-info {
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
 }
 
-.resource .stamina div {
-    background-color: brown;
+.battlefield .battlefield-block {
+    float: left;
+}
+
+.battlefield .battlefield-cells {
+    width: 50%;
+}
+
+
+.battlefield .battlefield-score {
+    width: 50%;
 }

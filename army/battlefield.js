@@ -2,31 +2,33 @@ function Battlefield(squads) {
     this._squads = squads;
 }
 
-Battlefield.prototype.fight = function (callback) {
-    if (this._squads.length > 1) {
-        var self = this;
-        var copyOfSquads = this.getCopyOfSquads();
-        var attackedSquadIndex = Math.ceil(Math.random() * (this._squads.length - 1));
-        var attackedSquad = copyOfSquads.splice(attackedSquadIndex, 1)[0];
-        var intervalDuration = Math.ceil(Math.random() * (2000 - 1000) + 1000)
-        var timeout = setTimeout(function () {
-            try {
-                copyOfSquads.forEach(function (attackSquad) {
-                    var attackedResource = attackedSquad.getRandomUnit();
-                    var attackedBy = attackSquad.getRandomUnit();
-                    self.attack.call(self, attackedSquad, attackedResource, attackedBy);
-                    self.removeIfNoResourcesExists.call(self, attackedSquadIndex);
-                })
-                callback();
-                self.fight.call(self, callback);
-            } catch (err) {
-                console.error(err);
-                clearTimeout(timeout);
-            }
-        }, intervalDuration)
-    } else {
-        throw new Error("You can't start fight. You need at least 2 squads");
+Battlefield.prototype.fight = function () {
+    var attackSquadIndex = Math.ceil(Math.random() * (this._squads.length - 1));
+    var attackSquad = this._squads[attackSquadIndex];
+    var squadsToBeAttacked = this._squads.filter(function (v, i) { return i !== attackSquadIndex });
+    var attackSquadResources = attackSquad.getResources();
+    for (var i = 0; i < attackSquadResources.length; i++) {
+        var attackResource = attackSquadResources[i];
+        this.attackSquads(squadsToBeAttacked, attackResource);
+
     }
+}
+Battlefield.prototype.attackSquads = function (squads, attackResource) {
+    for (var si = 0; si < squads.length; si++) {
+        var squadToAttack = squads[si];
+        try {
+            squadToAttack.attack(attackResource);
+        } catch (err) {
+            if (err instanceof SquadIsDeadError) {
+                continue;
+            }
+        }
+    }
+}
+
+Battlefield.prototype.removeResourceIfDead = function (squad, attackedResourceIndex) {
+    if (squad.getResources(attackedResourceIndex).isDead())
+        squad.removeResource(attackedResourceIndex);
 }
 
 Battlefield.prototype.removeIfNoResourcesExists = function (attackedSquadIndex) {
@@ -36,14 +38,8 @@ Battlefield.prototype.removeIfNoResourcesExists = function (attackedSquadIndex) 
 }
 
 Battlefield.prototype.attack = function (attackedSquad, attackedResource, attackedBy) {
-    try {
-        this.notifyAboutAttack(attackedResource, attackedBy);
-        attackedResource.attackedBy(attackedBy);
-    } catch (err) {
-        debugger;
-        attackedSquad.removeResource(attackedSquad.getResources().indexOf(attackedResource));
-        console.error(err.message);
-    }
+    this.notifyAboutAttack(attackedResource, attackedBy);
+    attackedResource.attackedBy(attackedBy);
 }
 
 Battlefield.prototype.notifyAboutAttack = function (attack, attackedBy) {
